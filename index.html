@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sweet Rush — Title Screen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-pink: #FF9FCB;
+    --dot-white: #FFFCF5;
+    --title-pink: #FFB3DA;
+    --stroke-cream: #FFF6E3;
+    --shadow-deep: #D9448F;
+    --accent-hot: #FF5FA8;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    background-color: var(--bg-pink);
+    background-image:
+      radial-gradient(var(--dot-white) 3.5px, transparent 3.6px),
+      radial-gradient(var(--dot-white) 3.5px, transparent 3.6px);
+    background-size: 60px 60px;
+    background-position: 0 0, 30px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    font-family: 'VT323', monospace;
+    position: relative;
+  }
+
+  /* CRT scanline + vignette overlay for arcade cabinet feel */
+  .crt-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.08) 0px,
+      rgba(255,255,255,0.08) 1px,
+      transparent 2px,
+      transparent 4px
+    );
+    mix-blend-mode: overlay;
+    z-index: 10;
+  }
+  .screen {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0) rotate(-4deg); }
+    50% { transform: translateY(-14px) rotate(4deg); }
+  }
+
+  h1.title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(28px, 6.5vw, 62px);
+    line-height: 1.4;
+    margin: 0;
+    color: var(--title-pink);
+    letter-spacing: 2px;
+    -webkit-text-stroke: 3px var(--stroke-cream);
+    paint-order: stroke fill;
+    text-shadow:
+      0 4px 0 var(--shadow-deep),
+      0 8px 0 var(--shadow-deep),
+      0 10px 18px rgba(0,0,0,0.25);
+    animation:
+      pop-in 0.7s cubic-bezier(.34,1.56,.64,1) both,
+      bob 2.4s ease-in-out 0.7s infinite;
+  }
+
+  h1.title .line2 {
+    display: block;
+    font-size: 0.55em;
+    margin-top: 14px;
+    color: var(--stroke-cream);
+    -webkit-text-stroke: 2px var(--accent-hot);
+  }
+
+  @keyframes pop-in {
+    0% { transform: scale(0.3) rotate(-6deg); opacity: 0; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+
+  .press-start {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(12px, 2.2vw, 18px);
+    color: var(--stroke-cream);
+    -webkit-text-stroke: 1.5px var(--shadow-deep);
+    background: var(--accent-hot);
+    padding: 14px 28px;
+    border: 4px solid var(--stroke-cream);
+    border-radius: 10px;
+    box-shadow: 0 6px 0 var(--shadow-deep);
+    cursor: pointer;
+    animation: blink 1.3s steps(1) infinite;
+    letter-spacing: 1px;
+  }
+
+  @keyframes blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0.35; }
+  }
+
+  .press-start:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 var(--shadow-deep);
+  }
+
+  .footer-note {
+    font-family: 'VT323', monospace;
+    font-size: 20px;
+    color: var(--shadow-deep);
+    letter-spacing: 1px;
+  }
+
+  .sprinkle {
+    position: absolute;
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(10px, 1.6vw, 14px);
+    color: var(--title-pink);
+    -webkit-text-stroke: 1.5px var(--stroke-cream);
+    paint-order: stroke fill;
+    opacity: 0.9;
+    animation: float 5s ease-in-out infinite;
+    z-index: 0;
+  }
+  .s1 { top: 10%; left: 12%; animation-delay: 0s; }
+  .s2 { top: 20%; right: 14%; animation-delay: 1.2s; }
+  .s3 { bottom: 16%; left: 18%; animation-delay: 2s; }
+  .s4 { bottom: 22%; right: 10%; animation-delay: 0.6s; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-18px) rotate(15deg); }
+  }
+</style>
+</head>
+<body>
+
+  <div class="sprinkle s1">YUM!</div>
+  <div class="sprinkle s2">POP!</div>
+  <div class="sprinkle s3">SWIRL!</div>
+  <div class="sprinkle s4">TASTY!</div>
+
+  <div class="screen">
+    <h1 class="title">
+      SWEET RUSH
+      <span class="line2">VERNICE'S BAKERY</span>
+    </h1>
+    <button class="press-start" onclick="alert('Next: hook this up to your game screen!')">
+      ▶ PRESS START
+    </button>
+    <div class="footer-note">happy 16th birthday vernice</div>
+  </div>
+
+  <div class="crt-overlay"></div>
+
+</body>
+</html>
