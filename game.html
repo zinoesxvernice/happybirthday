@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Sweet Rush — Bake!</title>
+<title>my baby!</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <style>
@@ -159,7 +159,76 @@
     transform-origin: 8px 77px;
   }
 
-  /* hold gesture */
+  /* mix-bowl gesture */
+  .mix-bowl {
+    position: relative;
+    width: 190px;
+    height: 190px;
+    border-radius: 50%;
+    background: var(--accent-hot);
+    border: 6px solid var(--stroke-cream);
+    box-shadow: 0 6px 0 var(--shadow-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: none;
+    cursor: grab;
+  }
+  .mix-batter {
+    position: relative;
+    width: 156px;
+    height: 156px;
+    border-radius: 50%;
+    background: #F4E1B8;
+    border: 4px solid #C9932A;
+    overflow: hidden;
+  }
+  .lump {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    margin-left: -10px;
+    margin-top: -10px;
+    border-radius: 40% 60% 55% 45% / 50% 45% 55% 50%;
+    background: #C9932A;
+    border: 2px solid #8B5E34;
+    transition: transform 0.25s ease-in, opacity 0.25s ease-in;
+  }
+  .lump.cleared {
+    transform: scale(0);
+    opacity: 0;
+  }
+  .spoon {
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    margin-left: -13px;
+    margin-top: -13px;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .spoon .head {
+    position: absolute;
+    left: 3px;
+    top: 3px;
+    width: 20px;
+    height: 20px;
+    background: var(--stroke-cream);
+    border: 3px solid var(--shadow-deep);
+    border-radius: 50%;
+  }
+  .spoon .handle {
+    position: absolute;
+    left: 11px;
+    top: -16px;
+    width: 5px;
+    height: 20px;
+    background: var(--stroke-cream);
+    border: 2px solid var(--shadow-deep);
+    border-radius: 3px;
+  }
+
+
   .hold-btn {
     font-family: 'Press Start 2P', monospace;
     font-size: 14px;
@@ -313,7 +382,7 @@
 
 <script>
   const GESTURE_MAP = {
-    MIX: "circle",
+    MIX: "mixBowl",
     FROST: "circle",
     POUR: "hold",
     BAKE: "shake",
@@ -322,7 +391,7 @@
   };
 
   const INSTRUCTION_TEXT = {
-    MIX: "SWIRL TO MIX!",
+    MIX: "STIR OUT THE LUMPS!",
     FROST: "SWIRL TO FROST!",
     POUR: "HOLD TO POUR!",
     BAKE: "SHAKE THE OVEN!",
@@ -354,6 +423,8 @@
   let holdStart = null;
   let holdActive = false;
   let tapCount = 0;
+  let lumps = [];
+  let lumpsCleared = 0;
   let stepResolved = false;
 
   const instructionEl = document.getElementById("instruction");
@@ -414,6 +485,8 @@
     holdStart = null;
     holdActive = false;
     tapCount = 0;
+    lumps = [];
+    lumpsCleared = 0;
   }
 
   function runTimeBar() {
@@ -429,7 +502,71 @@
   function renderGestureStage(gesture, action, difficultyRound) {
     gestureStageEl.innerHTML = "";
 
-    if (gesture === "circle") {
+    if (gesture === "mixBowl") {
+      requiredValue = 7 + Math.min(difficultyRound, 5);
+      const bowl = document.createElement("div");
+      bowl.className = "mix-bowl";
+      const batter = document.createElement("div");
+      batter.className = "mix-batter";
+      const spoon = document.createElement("div");
+      spoon.className = "spoon";
+      spoon.innerHTML = '<div class="handle"></div><div class="head"></div>';
+      bowl.appendChild(batter);
+      batter.appendChild(spoon);
+      gestureStageEl.appendChild(bowl);
+
+      // scatter lumps at random points inside the batter circle
+      const radius = 66;
+      lumps = [];
+      for (let i = 0; i < requiredValue; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = Math.random() * (radius - 14);
+        const lx = 78 + Math.cos(angle) * dist;
+        const ly = 78 + Math.sin(angle) * dist;
+        const el = document.createElement("div");
+        el.className = "lump";
+        el.style.left = lx + "px";
+        el.style.top = ly + "px";
+        batter.appendChild(el);
+        lumps.push({ el, x: lx, y: ly, cleared: false });
+      }
+      spoon.style.left = "78px";
+      spoon.style.top = "78px";
+
+      const getLocalPoint = (e) => {
+        const point = e.touches ? e.touches[0] : e;
+        const r = batter.getBoundingClientRect();
+        return { x: point.clientX - r.left, y: point.clientY - r.top };
+      };
+
+      const onDown = (e) => { dragging = true; moveSpoon(e); };
+      const onMove = (e) => { if (dragging) moveSpoon(e); };
+      const onUp = () => { dragging = false; };
+
+      function moveSpoon(e) {
+        if (stepResolved) return;
+        const p = getLocalPoint(e);
+        spoon.style.left = p.x + "px";
+        spoon.style.top = p.y + "px";
+        lumps.forEach(l => {
+          if (l.cleared) return;
+          const dx = p.x - l.x, dy = p.y - l.y;
+          if (Math.sqrt(dx * dx + dy * dy) < 22) {
+            l.cleared = true;
+            l.el.classList.add("cleared");
+            lumpsCleared++;
+            setProgress((lumpsCleared / requiredValue) * 100);
+            if (lumpsCleared >= requiredValue) resolveStep(true, false);
+          }
+        });
+      }
+
+      bowl.addEventListener("pointerdown", onDown);
+      bowl.addEventListener("pointermove", onMove);
+      window.addEventListener("pointerup", onUp);
+      bowl._cleanup = () => window.removeEventListener("pointerup", onUp);
+
+    } else if (gesture === "circle") {
       requiredValue = 2 * Math.PI * (1.6 + Math.min(difficultyRound * 0.2, 1.4));
       const zone = document.createElement("div");
       zone.className = "circle-zone";
@@ -551,7 +688,7 @@
     if (stepResolved) return;
     stepResolved = true;
     clearTimeout(timeTimerId);
-    const zoneCleanup = gestureStageEl.querySelector(".circle-zone, .shake-zone");
+    const zoneCleanup = gestureStageEl.querySelector(".circle-zone, .shake-zone, .mix-bowl");
     if (zoneCleanup && zoneCleanup._cleanup) zoneCleanup._cleanup();
 
     if (correct) {
