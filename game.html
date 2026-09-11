@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Sweet Rush — Bake!</title>
+<title>happyyy birthdayyy my sweet girl!</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <style>
@@ -157,6 +157,36 @@
     border: 3px solid var(--shadow-deep);
     border-radius: 50%;
     transform-origin: 8px 77px;
+  }
+
+  /* frost-swirl gesture */
+  .frost-wrap {
+    position: relative;
+    width: 190px;
+    height: 190px;
+    border-radius: 50%;
+    background: var(--accent-hot);
+    border: 6px solid var(--stroke-cream);
+    box-shadow: 0 6px 0 var(--shadow-deep);
+    touch-action: none;
+    cursor: grab;
+  }
+  .frost-wrap svg {
+    position: absolute;
+    top: 17px; left: 17px;
+    width: 156px; height: 156px;
+  }
+  .frost-knife {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    margin-left: -11px;
+    margin-top: -11px;
+    pointer-events: none;
+    background: var(--stroke-cream);
+    border: 3px solid var(--shadow-deep);
+    border-radius: 50%;
+    z-index: 2;
   }
 
   /* mix-bowl gesture */
@@ -337,24 +367,248 @@
     background: var(--good-green);
   }
 
-  /* shake gesture */
-  .shake-zone {
+  /* bake-timing gesture */
+  .bake-scene {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
     width: 100%;
-    height: 140px;
-    background: var(--accent-hot);
-    border: 5px solid var(--stroke-cream);
-    border-radius: 16px;
-    box-shadow: 0 6px 0 var(--shadow-deep);
+  }
+  .bake-hint {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: var(--shadow-deep);
+    text-align: center;
+  }
+
+  .oven-wrap {
+    position: relative;
+    width: 190px;
+  }
+
+  .heat-glow {
+    position: absolute;
+    left: 50%;
+    bottom: -14px;
+    width: 150px;
+    height: 40px;
+    margin-left: -75px;
+    background: radial-gradient(ellipse at center, rgba(255,160,60,0.55) 0%, rgba(255,160,60,0) 70%);
+    animation: glow-pulse 1.4s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes glow-pulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.08); }
+  }
+
+  .steam {
+    position: absolute;
+    top: -18px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.75);
+    animation: steam-rise 2.2s ease-in infinite;
+    opacity: 0;
+  }
+  .steam.s1 { left: 30px; animation-delay: 0s; }
+  .steam.s2 { left: 90px; animation-delay: 0.7s; }
+  .steam.s3 { left: 145px; animation-delay: 1.4s; }
+  @keyframes steam-rise {
+    0% { transform: translateY(0) scale(0.8); opacity: 0; }
+    30% { opacity: 0.8; }
+    100% { transform: translateY(-26px) scale(1.1); opacity: 0; }
+  }
+
+  .oven-body {
+    position: relative;
+    width: 190px;
+    background: #6B4630;
+    border: 6px solid var(--stroke-cream);
+    border-radius: 16px 16px 10px 10px;
+    box-shadow: 0 8px 0 #4A2F1D;
+    padding: 10px 12px 14px;
+    z-index: 1;
+  }
+
+  .oven-panel {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .oven-knob {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--stroke-cream);
+    border: 3px solid #4A2F1D;
+  }
+  .oven-knob::after {
+    content: "";
+    position: absolute;
+    width: 2px;
+    height: 6px;
+    background: #4A2F1D;
+  }
+
+  .oven-window {
+    width: 100%;
+    height: 92px;
+    background: #2A1810;
+    border: 5px solid #4A2F1D;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Press Start 2P', monospace;
-    color: var(--stroke-cream);
-    -webkit-text-stroke: 1.2px var(--shadow-deep);
-    font-size: 13px;
-    text-align: center;
-    cursor: grab;
+    overflow: hidden;
   }
+  .oven-cake {
+    width: 60px;
+    height: 44px;
+    border-radius: 50% 50% 40% 40%;
+    background: #FFF3D6;
+    border: 3px solid #C9932A;
+    transition: background-color 0.15s linear;
+  }
+
+  .oven-handle {
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    width: 70px;
+    height: 8px;
+    margin-left: -35px;
+    background: var(--stroke-cream);
+    border: 2px solid #4A2F1D;
+    border-radius: 4px;
+  }
+
+  .oven-legs {
+    display: flex;
+    justify-content: space-between;
+    width: 150px;
+    margin: 0 auto;
+  }
+  .oven-leg {
+    width: 14px;
+    height: 10px;
+    background: #4A2F1D;
+    border-radius: 0 0 4px 4px;
+  }
+
+  .bake-gauge {
+    position: relative;
+    width: 230px;
+    height: 30px;
+    border: 5px solid var(--stroke-cream);
+    border-radius: 10px;
+    box-shadow: 0 5px 0 var(--shadow-deep);
+    background: linear-gradient(
+      to right,
+      #FFF3D6 0%, #FFE9A8 22%, #F4C24C 45%, #D98A2E 62%, #A8531F 80%, #5C2A14 100%
+    );
+    overflow: hidden;
+  }
+  .bake-zone {
+    position: absolute;
+    top: 0; bottom: 0;
+    background: rgba(255,255,255,0.0);
+    border-left: 3px dashed var(--good-green);
+    border-right: 3px dashed var(--good-green);
+  }
+  .bake-needle {
+    position: absolute;
+    top: -4px; bottom: -4px;
+    width: 6px;
+    margin-left: -3px;
+    background: var(--stroke-cream);
+    border: 2px solid var(--shadow-deep);
+    border-radius: 4px;
+  }
+  .bake-hits {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    color: var(--shadow-deep);
+  }
+  .bake-tap-btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 13px;
+    color: var(--stroke-cream);
+    -webkit-text-stroke: 1.5px var(--shadow-deep);
+    background: var(--accent-hot);
+    border: 5px solid var(--stroke-cream);
+    border-radius: 14px;
+    box-shadow: 0 6px 0 var(--shadow-deep);
+    width: 150px;
+    height: 56px;
+    cursor: pointer;
+  }
+  .bake-tap-btn.hit-good { background: var(--good-green); }
+  .bake-tap-btn.hit-bad { background: var(--miss-red); }
+  .bake-tap-btn.pulse { animation: tap-pulse 0.12s ease-out; }
+
+  /* sprinkle-shake gesture */
+  .sprinkle-wrap {
+    position: relative;
+    width: 190px;
+    height: 190px;
+    border-radius: 50%;
+    background: var(--accent-hot);
+    border: 6px solid var(--stroke-cream);
+    box-shadow: 0 6px 0 var(--shadow-deep);
+    touch-action: none;
+    cursor: grab;
+    overflow: hidden;
+  }
+  .sprinkle-cake {
+    position: absolute;
+    top: 17px; left: 17px;
+    width: 156px; height: 156px;
+    border-radius: 50%;
+    background: #FFD9EC;
+    border: 4px solid #E88FC0;
+    overflow: hidden;
+  }
+  .sprinkle-dot {
+    position: absolute;
+    width: 5px;
+    height: 11px;
+    margin-left: -2.5px;
+    margin-top: -5.5px;
+    border-radius: 2px;
+    transform-origin: center;
+    animation: sprinkle-drop 0.15s ease-out;
+  }
+  @keyframes sprinkle-drop {
+    0% { transform: scale(0) rotate(var(--rot)); }
+    100% { transform: scale(1) rotate(var(--rot)); }
+  }
+  .shaker {
+    position: absolute;
+    width: 26px;
+    height: 34px;
+    margin-left: -13px;
+    margin-top: -30px;
+    pointer-events: none;
+    z-index: 3;
+    background: var(--stroke-cream);
+    border: 3px solid var(--shadow-deep);
+    border-radius: 6px 6px 10px 10px;
+    transition: transform 0.06s ease-out;
+  }
+  .shaker::before {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: 6px;
+    width: 11px;
+    height: 8px;
+    background: var(--shadow-deep);
+    border-radius: 3px 3px 0 0;
+  }
+  .shaker.wiggle-a { transform: rotate(-18deg); }
+  .shaker.wiggle-b { transform: rotate(18deg); }
 
   /* tap gesture */
   .tap-btn {
@@ -474,19 +728,19 @@
 <script>
   const GESTURE_MAP = {
     MIX: "mixBowl",
-    FROST: "circle",
+    FROST: "frostSwirl",
     POUR: "pourBalance",
-    BAKE: "shake",
-    SPRINKLE: "tap",
+    BAKE: "bakeTiming",
+    SPRINKLE: "sprinkleShake",
     DECORATE: "tap",
   };
 
   const INSTRUCTION_TEXT = {
     MIX: "STIR OUT THE LUMPS!",
-    FROST: "SWIRL TO FROST!",
+    FROST: "TRACE THE SWIRL!",
     POUR: "KEEP THE STREAM STEADY!",
-    BAKE: "SHAKE THE OVEN!",
-    SPRINKLE: "TAP THE SPRINKLES!",
+    BAKE: "TAP WHEN GOLDEN!",
+    SPRINKLE: "SHAKE IT ALL OVER!",
     DECORATE: "TAP TO DECORATE!",
   };
 
@@ -531,8 +785,12 @@
   function buildSequence() {
     const length = 5 + Math.min(round, 4);
     sequence = [];
+    let pourUsed = false;
     for (let i = 0; i < length; i++) {
-      sequence.push(ACTIONS[Math.floor(Math.random() * ACTIONS.length)]);
+      const pool = pourUsed ? ACTIONS.filter(a => a !== "POUR") : ACTIONS;
+      const choice = pool[Math.floor(Math.random() * pool.length)];
+      if (choice === "POUR") pourUsed = true;
+      sequence.push(choice);
     }
   }
 
@@ -564,14 +822,8 @@
     resetGestureState();
     renderGestureStage(gesture, action, round);
 
-    const timeRowEl = document.getElementById("timeRow");
-    if (action === "POUR") {
-      clearTimeout(timeTimerId);
-      timeRowEl.style.display = "none";
-    } else {
-      timeRowEl.style.display = "";
-      runTimeBar();
-    }
+    clearTimeout(timeTimerId);
+    document.getElementById("timeRow").style.display = "none";
   }
 
   function resetGestureState() {
@@ -664,6 +916,111 @@
       bowl.addEventListener("pointermove", onMove);
       window.addEventListener("pointerup", onUp);
       bowl._cleanup = () => window.removeEventListener("pointerup", onUp);
+
+    } else if (gesture === "frostSwirl") {
+      const checkpointCount = 6 + Math.min(Math.floor(difficultyRound / 2), 4);
+      requiredValue = checkpointCount;
+      let nextIndex = 0;
+
+      const wrap = document.createElement("div");
+      wrap.className = "frost-wrap";
+      const svgNS = "http://www.w3.org/2000/svg";
+      const svg = document.createElementNS(svgNS, "svg");
+      svg.setAttribute("viewBox", "0 0 156 156");
+
+      const cake = document.createElementNS(svgNS, "circle");
+      cake.setAttribute("cx", "78"); cake.setAttribute("cy", "78"); cake.setAttribute("r", "72");
+      cake.setAttribute("fill", "#FFE9CC");
+      cake.setAttribute("stroke", "#C9932A");
+      cake.setAttribute("stroke-width", "3");
+      svg.appendChild(cake);
+
+      // build a dense spiral point list, center outward
+      const cx = 78, cy = 78, turns = 2.2, n = 72;
+      const points = [];
+      for (let i = 0; i < n; i++) {
+        const t = i / (n - 1);
+        const angle = t * Math.PI * 2 * turns;
+        const radius = 12 + t * 54;
+        points.push({ x: cx + Math.cos(angle) * radius, y: cy + Math.sin(angle) * radius });
+      }
+      const pointsToPath = (pts) =>
+        pts.length ? "M " + pts.map(p => `${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" L ") : "";
+
+      const guide = document.createElementNS(svgNS, "path");
+      guide.setAttribute("d", pointsToPath(points));
+      guide.setAttribute("fill", "none");
+      guide.setAttribute("stroke", "var(--stroke-cream)");
+      guide.setAttribute("stroke-width", "3");
+      guide.setAttribute("stroke-dasharray", "3 5");
+      guide.setAttribute("opacity", "0.7");
+      svg.appendChild(guide);
+
+      const trail = document.createElementNS(svgNS, "path");
+      trail.setAttribute("fill", "none");
+      trail.setAttribute("stroke", "var(--title-pink)");
+      trail.setAttribute("stroke-width", "9");
+      trail.setAttribute("stroke-linecap", "round");
+      trail.setAttribute("stroke-linejoin", "round");
+      svg.appendChild(trail);
+
+      // checkpoints evenly spaced along the dense point list (skip the very first point)
+      const step = Math.floor((n - 1) / checkpointCount);
+      const checkpoints = [];
+      for (let c = 1; c <= checkpointCount; c++) {
+        const idx = Math.min(n - 1, c * step);
+        const p = points[idx];
+        const circle = document.createElementNS(svgNS, "circle");
+        circle.setAttribute("cx", p.x); circle.setAttribute("cy", p.y); circle.setAttribute("r", "7");
+        circle.setAttribute("fill", "var(--stroke-cream)");
+        circle.setAttribute("stroke", "var(--shadow-deep)");
+        circle.setAttribute("stroke-width", "2.5");
+        svg.appendChild(circle);
+        checkpoints.push({ x: p.x, y: p.y, pointIndex: idx, el: circle });
+      }
+
+      wrap.appendChild(svg);
+      const knife = document.createElement("div");
+      knife.className = "frost-knife";
+      wrap.appendChild(knife);
+      gestureStageEl.appendChild(wrap);
+
+      let lastCapturedPointIndex = 0;
+
+      const getLocalPoint = (e) => {
+        const point = e.touches ? e.touches[0] : e;
+        const r = svg.getBoundingClientRect();
+        const scaleX = 156 / r.width, scaleY = 156 / r.height;
+        return { x: (point.clientX - r.left) * scaleX, y: (point.clientY - r.top) * scaleY };
+      };
+
+      const onDown = (e) => { dragging = true; moveKnife(e); };
+      const onMove = (e) => { if (dragging) moveKnife(e); };
+      const onUp = () => { dragging = false; };
+
+      function moveKnife(e) {
+        if (stepResolved) return;
+        const p = getLocalPoint(e);
+        knife.style.left = (17 + p.x) + "px";
+        knife.style.top = (17 + p.y) + "px";
+
+        if (nextIndex >= checkpoints.length) return;
+        const target = checkpoints[nextIndex];
+        const dx = p.x - target.x, dy = p.y - target.y;
+        if (Math.sqrt(dx * dx + dy * dy) < 14) {
+          target.el.setAttribute("fill", "var(--title-pink)");
+          trail.setAttribute("d", pointsToPath(points.slice(lastCapturedPointIndex, target.pointIndex + 1)));
+          lastCapturedPointIndex = target.pointIndex;
+          nextIndex++;
+          setProgress((nextIndex / checkpointCount) * 100);
+          if (nextIndex >= checkpointCount) resolveStep(true, false);
+        }
+      }
+
+      wrap.addEventListener("pointerdown", onDown);
+      wrap.addEventListener("pointermove", onMove);
+      window.addEventListener("pointerup", onUp);
+      wrap._cleanup = () => window.removeEventListener("pointerup", onUp);
 
     } else if (gesture === "circle") {
       requiredValue = 2 * Math.PI * (1.6 + Math.min(difficultyRound * 0.2, 1.4));
@@ -848,44 +1205,213 @@
       btn.addEventListener("pointerup", onUp);
       btn.addEventListener("pointerleave", onUp);
 
-    } else if (gesture === "shake") {
-      requiredValue = 6 + Math.min(difficultyRound, 6);
-      const zone = document.createElement("div");
-      zone.className = "shake-zone";
-      zone.textContent = "WIGGLE ME!";
-      gestureStageEl.appendChild(zone);
+    } else if (gesture === "bakeTiming") {
+      const hitsNeeded = 3 + Math.min(Math.floor(difficultyRound / 2), 3);
+      requiredValue = hitsNeeded;
+      let hits = 0;
 
-      const onDown = (e) => { dragging = true; lastX = null; lastDir = 0; };
-      const onMove = (e) => {
-        if (!dragging || stepResolved) return;
-        const point = e.touches ? e.touches[0] : e;
-        const x = point.clientX;
-        if (lastX !== null) {
-          const dx = x - lastX;
-          if (Math.abs(dx) > 12) {
-            const dir = dx > 0 ? 1 : -1;
-            if (lastDir !== 0 && dir !== lastDir) {
-              shakeCount++;
-              setProgress((shakeCount / requiredValue) * 100);
-              if (shakeCount >= requiredValue) { resolveStep(true, false); }
-            }
-            lastDir = dir;
+      const scene = document.createElement("div");
+      scene.className = "bake-scene";
+      const hint = document.createElement("div");
+      hint.className = "bake-hint";
+      hint.textContent = "TAP PEEK! WHEN THE CAKE LOOKS GOLDEN";
+
+      const ovenWrap = document.createElement("div");
+      ovenWrap.className = "oven-wrap";
+      ovenWrap.innerHTML = `
+        <div class="heat-glow"></div>
+        <div class="steam s1">~</div>
+        <div class="steam s2">~</div>
+        <div class="steam s3">~</div>
+        <div class="oven-body">
+          <div class="oven-panel">
+            <div class="oven-knob"></div>
+            <div class="oven-knob"></div>
+            <div class="oven-knob"></div>
+          </div>
+          <div class="oven-window"><div class="oven-cake"></div></div>
+          <div class="oven-handle"></div>
+        </div>
+        <div class="oven-legs"><div class="oven-leg"></div><div class="oven-leg"></div></div>
+      `;
+      const cakeEl = ovenWrap.querySelector(".oven-cake");
+
+      const gauge = document.createElement("div");
+      gauge.className = "bake-gauge";
+      const zone = document.createElement("div");
+      zone.className = "bake-zone";
+      const needle = document.createElement("div");
+      needle.className = "bake-needle";
+      gauge.appendChild(zone);
+      gauge.appendChild(needle);
+      const hitsLabel = document.createElement("div");
+      hitsLabel.className = "bake-hits";
+      hitsLabel.textContent = "GOOD BAKES: 0 / " + hitsNeeded;
+      const btn = document.createElement("button");
+      btn.className = "bake-tap-btn";
+      btn.textContent = "PEEK!";
+
+      scene.appendChild(hint);
+      scene.appendChild(ovenWrap);
+      scene.appendChild(gauge);
+      scene.appendChild(hitsLabel);
+      scene.appendChild(btn);
+      gestureStageEl.appendChild(scene);
+
+      // color stops matching the gauge gradient, for tinting the cake sprite
+      const COLOR_STOPS = [
+        [0, [255, 243, 214]], [22, [255, 233, 168]], [45, [244, 194, 76]],
+        [62, [217, 138, 46]], [80, [168, 83, 31]], [100, [92, 42, 20]],
+      ];
+      function colorAt(pct) {
+        for (let i = 0; i < COLOR_STOPS.length - 1; i++) {
+          const [p0, c0] = COLOR_STOPS[i];
+          const [p1, c1] = COLOR_STOPS[i + 1];
+          if (pct >= p0 && pct <= p1) {
+            const t = (pct - p0) / (p1 - p0);
+            const r = Math.round(c0[0] + (c1[0] - c0[0]) * t);
+            const g = Math.round(c0[1] + (c1[1] - c0[1]) * t);
+            const b = Math.round(c0[2] + (c1[2] - c0[2]) * t);
+            return `rgb(${r},${g},${b})`;
           }
         }
-        lastX = x;
+        return "rgb(255,243,214)";
+      }
+
+      const gaugeWidth = () => gauge.getBoundingClientRect().width || 230;
+      const zoneWidth = Math.max(30, 52 - difficultyRound * 1.5);
+      // golden zone sits roughly over the golden-brown part of the gradient
+      const zoneCenterPct = 0.5;
+
+      function positionZone() {
+        const w = gaugeWidth();
+        const left = w * zoneCenterPct - zoneWidth / 2;
+        zone.style.left = left + "px";
+        zone.style.width = zoneWidth + "px";
+        return { left, right: left + zoneWidth };
+      }
+      let zoneBounds = positionZone();
+
+      let phase = Math.random() * Math.PI * 2;
+      const speed = 0.0018 + Math.min(difficultyRound * 0.00022, 0.0016);
+      let lastTs = null;
+      let localRaf = null;
+      let needleX = gaugeWidth() / 2;
+
+      function frame(ts) {
+        if (stepResolved) return;
+        if (lastTs === null) lastTs = ts;
+        const dt = ts - lastTs;
+        lastTs = ts;
+
+        const w = gaugeWidth();
+        phase += speed * dt;
+        needleX = w / 2 + (w / 2 - 6) * Math.sin(phase);
+        needle.style.left = needleX + "px";
+        cakeEl.style.background = colorAt((needleX / w) * 100);
+
+        localRaf = requestAnimationFrame(frame);
+      }
+
+      btn.addEventListener("pointerdown", () => {
+        if (stepResolved) return;
+        const inZone = needleX >= zoneBounds.left && needleX <= zoneBounds.right;
+        btn.classList.remove("pulse", "hit-good", "hit-bad");
+        void btn.offsetWidth;
+        btn.classList.add("pulse", inZone ? "hit-good" : "hit-bad");
+        setTimeout(() => btn.classList.remove("hit-good", "hit-bad"), 220);
+
+        if (inZone) {
+          hits++;
+          hitsLabel.textContent = "GOOD BAKES: " + hits + " / " + hitsNeeded;
+          setProgress((hits / hitsNeeded) * 100);
+          if (hits >= hitsNeeded) resolveStep(true, false);
+        }
+      });
+
+      localRaf = requestAnimationFrame(frame);
+      const onResize = () => { zoneBounds = positionZone(); };
+      window.addEventListener("resize", onResize);
+      gauge._cleanup = () => {
+        cancelAnimationFrame(localRaf);
+        window.removeEventListener("resize", onResize);
       };
+
+    } else if (gesture === "sprinkleShake") {
+      requiredValue = 22 + Math.min(difficultyRound * 2, 16);
+      let placed = 0;
+      const SPRINKLE_COLORS = ["#FF5FA8", "#3ED598", "#FFD23F", "#FFF6E3", "#6FA8D6"];
+
+      const wrap = document.createElement("div");
+      wrap.className = "sprinkle-wrap";
+      const cake = document.createElement("div");
+      cake.className = "sprinkle-cake";
+      wrap.appendChild(cake);
+      const shaker = document.createElement("div");
+      shaker.className = "shaker";
+      wrap.appendChild(shaker);
+      gestureStageEl.appendChild(wrap);
+
+      const cakeRadius = 78;
+      let lastPoint = null;
+      let distanceSince = 0;
+      let wiggleToggle = false;
+
+      const getLocalPoint = (e) => {
+        const point = e.touches ? e.touches[0] : e;
+        const r = cake.getBoundingClientRect();
+        return { x: point.clientX - r.left - 78, y: point.clientY - r.top - 78 }; // relative to cake center
+      };
+
+      const onDown = (e) => { dragging = true; lastPoint = null; handleMove(e); };
+      const onMove = (e) => { if (dragging) handleMove(e); };
       const onUp = () => { dragging = false; };
 
-      zone.addEventListener("pointerdown", onDown);
-      zone.addEventListener("pointermove", onMove);
+      function handleMove(e) {
+        if (stepResolved) return;
+        const p = getLocalPoint(e);
+        const wrapRect = wrap.getBoundingClientRect();
+        const cakeRect = cake.getBoundingClientRect();
+        const shakerX = (cakeRect.left - wrapRect.left) + 78 + p.x;
+        const shakerY = (cakeRect.top - wrapRect.top) + 78 + p.y;
+        shaker.style.left = shakerX + "px";
+        shaker.style.top = shakerY + "px";
+        wiggleToggle = !wiggleToggle;
+        shaker.classList.toggle("wiggle-a", wiggleToggle);
+        shaker.classList.toggle("wiggle-b", !wiggleToggle);
+
+        if (lastPoint) {
+          distanceSince += Math.hypot(p.x - lastPoint.x, p.y - lastPoint.y);
+          while (distanceSince > 14 && placed < requiredValue) {
+            distanceSince -= 14;
+            const dist = Math.hypot(p.x, p.y);
+            if (dist < cakeRadius - 6) {
+              const dot = document.createElement("div");
+              dot.className = "sprinkle-dot";
+              dot.style.left = (78 + p.x + (Math.random() * 10 - 5)) + "px";
+              dot.style.top = (78 + p.y + (Math.random() * 10 - 5)) + "px";
+              dot.style.background = SPRINKLE_COLORS[Math.floor(Math.random() * SPRINKLE_COLORS.length)];
+              dot.style.setProperty("--rot", Math.floor(Math.random() * 360) + "deg");
+              cake.appendChild(dot);
+              placed++;
+              setProgress((placed / requiredValue) * 100);
+              if (placed >= requiredValue) { resolveStep(true, false); break; }
+            }
+          }
+        }
+        lastPoint = p;
+      }
+
+      wrap.addEventListener("pointerdown", onDown);
+      wrap.addEventListener("pointermove", onMove);
       window.addEventListener("pointerup", onUp);
-      zone._cleanup = () => window.removeEventListener("pointerup", onUp);
+      wrap._cleanup = () => window.removeEventListener("pointerup", onUp);
 
     } else if (gesture === "tap") {
       requiredValue = 7 + Math.min(difficultyRound, 6);
       const btn = document.createElement("button");
       btn.className = "tap-btn";
-      btn.textContent = action === "SPRINKLE" ? "TAP!" : "PLACE!";
+      btn.textContent = "PLACE!";
       gestureStageEl.appendChild(btn);
 
       btn.addEventListener("pointerdown", () => {
@@ -904,8 +1430,8 @@
     if (stepResolved) return;
     stepResolved = true;
     clearTimeout(timeTimerId);
-    const zoneCleanup = gestureStageEl.querySelector(".circle-zone, .shake-zone, .mix-bowl, .pour-fixed-bowl");
-    if (zoneCleanup && zoneCleanup._cleanup) zoneCleanup._cleanup();
+    gestureStageEl.querySelectorAll(".circle-zone, .shake-zone, .mix-bowl, .pour-fixed-bowl, .bake-gauge, .oven-wrap, .frost-wrap")
+      .forEach(el => { if (el._cleanup) el._cleanup(); });
 
     if (correct) {
       combo++;
