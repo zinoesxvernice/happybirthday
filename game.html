@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>my baby!</title>
+<title>Sweet Rush — Bake!</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <style>
@@ -229,6 +229,95 @@
   }
 
 
+  /* pour-balance gesture: bowl tips into a moving tin */
+  .pour-scene {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 16px;
+    padding: 6px 0;
+  }
+  .pour-hint {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: var(--shadow-deep);
+    text-align: center;
+  }
+  .pour-fixed-bowl {
+    position: relative;
+    width: 84px;
+    height: 54px;
+    background: var(--accent-hot);
+    border: 5px solid var(--stroke-cream);
+    border-radius: 8px 8px 30px 30px;
+    box-shadow: 0 6px 0 var(--shadow-deep);
+    transform-origin: 85% 100%;
+    transition: transform 0.12s ease-out;
+    cursor: grab;
+    touch-action: none;
+  }
+  .pour-fixed-bowl.tipping {
+    transform: rotate(-32deg);
+  }
+  .pour-fixed-bowl::after {
+    content: "";
+    position: absolute;
+    right: -6px;
+    bottom: 6px;
+    width: 0; height: 0;
+    border-left: 8px solid transparent;
+    border-top: 8px solid var(--stroke-cream);
+  }
+  .pour-stream {
+    position: absolute;
+    width: 7px;
+    background: #F4E1B8;
+    border-left: 2px solid #C9932A;
+    border-right: 2px solid #C9932A;
+    opacity: 0;
+    transition: opacity 0.1s;
+  }
+  .pour-stream.active { opacity: 1; }
+  .pour-rail {
+    position: relative;
+    width: 100%;
+    height: 40px;
+  }
+  .pour-rail::before {
+    content: "";
+    position: absolute;
+    left: 0; right: 0;
+    bottom: 4px;
+    height: 4px;
+    background: var(--shadow-deep);
+    opacity: 0.4;
+    border-radius: 2px;
+  }
+  .pour-tin {
+    position: absolute;
+    bottom: 0;
+    width: 60px;
+    height: 32px;
+    margin-left: -30px;
+    background: #C9C9C9;
+    border: 4px solid #8A8A8A;
+    border-radius: 6px 6px 14px 14px;
+    box-shadow: 0 4px 0 #8A8A8A;
+  }
+  .pour-tin .fill {
+    position: absolute;
+    left: 4px; right: 4px; bottom: 3px;
+    height: 0%;
+    background: #F4E1B8;
+    border-radius: 2px 2px 8px 8px;
+    transition: height 0.1s linear;
+  }
+  .pour-tin.aligned {
+    box-shadow: 0 4px 0 #8A8A8A, 0 0 0 4px rgba(62,213,152,0.6);
+  }
+
   .hold-btn {
     font-family: 'Press Start 2P', monospace;
     font-size: 14px;
@@ -354,8 +443,10 @@
     <div class="instruction" id="instruction">GET READY...</div>
 
     <div class="bar-row">
-      <div class="bar-label">TIME</div>
-      <div class="bar-track"><div class="bar-fill" id="timeFill"></div></div>
+      <div id="timeRow">
+        <div class="bar-label">TIME</div>
+        <div class="bar-track"><div class="bar-fill" id="timeFill"></div></div>
+      </div>
       <div class="bar-label">PROGRESS</div>
       <div class="bar-track"><div class="bar-fill" id="progressFill"></div></div>
     </div>
@@ -384,7 +475,7 @@
   const GESTURE_MAP = {
     MIX: "mixBowl",
     FROST: "circle",
-    POUR: "hold",
+    POUR: "pourBalance",
     BAKE: "shake",
     SPRINKLE: "tap",
     DECORATE: "tap",
@@ -393,7 +484,7 @@
   const INSTRUCTION_TEXT = {
     MIX: "STIR OUT THE LUMPS!",
     FROST: "SWIRL TO FROST!",
-    POUR: "HOLD TO POUR!",
+    POUR: "KEEP THE STREAM STEADY!",
     BAKE: "SHAKE THE OVEN!",
     SPRINKLE: "TAP THE SPRINKLES!",
     DECORATE: "TAP TO DECORATE!",
@@ -472,7 +563,15 @@
     setProgress(0);
     resetGestureState();
     renderGestureStage(gesture, action, round);
-    runTimeBar();
+
+    const timeRowEl = document.getElementById("timeRow");
+    if (action === "POUR") {
+      clearTimeout(timeTimerId);
+      timeRowEl.style.display = "none";
+    } else {
+      timeRowEl.style.display = "";
+      runTimeBar();
+    }
   }
 
   function resetGestureState() {
@@ -604,6 +703,123 @@
       window.addEventListener("pointerup", onUp);
       zone._cleanup = () => window.removeEventListener("pointerup", onUp);
 
+    } else if (gesture === "pourBalance") {
+      requiredValue = 1300 + Math.min(difficultyRound * 80, 700);
+      const scene = document.createElement("div");
+      scene.className = "pour-scene";
+
+      const hint = document.createElement("div");
+      hint.className = "pour-hint";
+      hint.textContent = "HOLD THE BOWL WHEN THE TIN IS UNDERNEATH!";
+
+      const bowl = document.createElement("div");
+      bowl.className = "pour-fixed-bowl";
+
+      const stream = document.createElement("div");
+      stream.className = "pour-stream";
+
+      const rail = document.createElement("div");
+      rail.className = "pour-rail";
+      const tin = document.createElement("div");
+      tin.className = "pour-tin";
+      const fill = document.createElement("div");
+      fill.className = "fill";
+      tin.appendChild(fill);
+      rail.appendChild(tin);
+
+      scene.appendChild(hint);
+      scene.appendChild(bowl);
+      scene.appendChild(stream);
+      scene.appendChild(rail);
+      gestureStageEl.appendChild(scene);
+
+      const railWidth = () => rail.getBoundingClientRect().width || 220;
+
+      function measure() {
+        const sceneRect = scene.getBoundingClientRect();
+        const bowlRect = bowl.getBoundingClientRect();
+        const railRect = rail.getBoundingClientRect();
+        const spoutX = bowlRect.right - sceneRect.left - 10;
+        const streamTop = bowlRect.bottom - sceneRect.top - 2;
+        const streamMaxHeight = Math.max(0, railRect.top - sceneRect.top - streamTop);
+        return { spoutX, streamTop, streamMaxHeight };
+      }
+
+      let { spoutX, streamTop, streamMaxHeight } = measure();
+      stream.style.left = (spoutX - 3.5) + "px";
+      stream.style.top = streamTop + "px";
+      stream.style.height = "0px";
+
+      let phase = Math.random() * Math.PI * 2;
+      const speed = 0.0016 + Math.min(difficultyRound * 0.00018, 0.0012);
+      const tolerance = Math.max(16, 30 - difficultyRound * 1.5);
+      let lastTs = null;
+      let pourTime = 0;
+      let localRaf = null;
+      let tinX = railWidth() / 2;
+
+      const onDown = () => {
+        holdActive = true;
+        bowl.classList.add("tipping");
+      };
+      const onUp = () => {
+        holdActive = false;
+        bowl.classList.remove("tipping");
+        stream.classList.remove("active");
+        stream.style.height = "0px";
+      };
+
+      function frame(ts) {
+        if (stepResolved) return;
+        if (lastTs === null) lastTs = ts;
+        const dt = ts - lastTs;
+        lastTs = ts;
+
+        const w = railWidth();
+        const half = (w - 60) / 2; // tin width 60
+        phase += speed * dt;
+        tinX = half + half * Math.sin(phase) + 30; // center x of tin
+        tin.style.left = tinX + "px";
+
+        const aligned = Math.abs(tinX - spoutX) <= tolerance;
+        tin.classList.toggle("aligned", aligned && holdActive);
+
+        if (holdActive) {
+          stream.classList.add("active");
+          stream.style.height = streamMaxHeight + "px";
+          if (aligned) {
+            pourTime += dt;
+            setProgress((pourTime / requiredValue) * 100);
+            fill.style.height = Math.min(100, (pourTime / requiredValue) * 100) + "%";
+            if (pourTime >= requiredValue) { resolveStep(true, false); return; }
+          } else {
+            pourTime = Math.max(0, pourTime - dt * 0.4);
+            setProgress((pourTime / requiredValue) * 100);
+            fill.style.height = Math.min(100, (pourTime / requiredValue) * 100) + "%";
+          }
+        } else {
+          stream.classList.remove("active");
+          stream.style.height = "0px";
+        }
+
+        localRaf = requestAnimationFrame(frame);
+      }
+
+      bowl.addEventListener("pointerdown", onDown);
+      window.addEventListener("pointerup", onUp);
+      const onResize = () => {
+        ({ spoutX, streamTop, streamMaxHeight } = measure());
+        stream.style.left = (spoutX - 3.5) + "px";
+        stream.style.top = streamTop + "px";
+      };
+      window.addEventListener("resize", onResize);
+      localRaf = requestAnimationFrame(frame);
+      bowl._cleanup = () => {
+        cancelAnimationFrame(localRaf);
+        window.removeEventListener("pointerup", onUp);
+        window.removeEventListener("resize", onResize);
+      };
+
     } else if (gesture === "hold") {
       requiredValue = 1300 + Math.min(difficultyRound * 80, 700);
       const btn = document.createElement("button");
@@ -688,7 +904,7 @@
     if (stepResolved) return;
     stepResolved = true;
     clearTimeout(timeTimerId);
-    const zoneCleanup = gestureStageEl.querySelector(".circle-zone, .shake-zone, .mix-bowl");
+    const zoneCleanup = gestureStageEl.querySelector(".circle-zone, .shake-zone, .mix-bowl, .pour-fixed-bowl");
     if (zoneCleanup && zoneCleanup._cleanup) zoneCleanup._cleanup();
 
     if (correct) {
