@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sweet Rush — Happy Birthday!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-pink: #FF9FCB;
+    --dot-white: #FFFCF5;
+    --title-pink: #FFB3DA;
+    --stroke-cream: #FFF6E3;
+    --shadow-deep: #D9448F;
+    --accent-hot: #FF5FA8;
+    --good-green: #3ED598;
+    --plate-cream: #FFF6E3;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0; padding: 0; height: 100%; overflow: hidden;
+    -webkit-user-select: none; user-select: none;
+  }
+
+  body {
+    background-color: var(--bg-pink);
+    background-image:
+      radial-gradient(var(--dot-white) 3.5px, transparent 3.6px),
+      radial-gradient(var(--dot-white) 3.5px, transparent 3.6px);
+    background-size: 60px 60px;
+    background-position: 0 0, 30px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    font-family: 'VT323', monospace;
+    position: relative;
+  }
+
+  .arcade-text {
+    font-family: 'Press Start 2P', monospace;
+    color: var(--title-pink);
+    -webkit-text-stroke: 2px var(--stroke-cream);
+    paint-order: stroke fill;
+  }
+
+  .wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    padding: 20px;
+    width: min(420px, 92vw);
+    text-align: center;
+  }
+
+  h1 {
+    font-size: clamp(18px, 4.4vw, 28px);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .hint {
+    font-family: 'VT323', monospace;
+    font-size: 22px;
+    color: var(--shadow-deep);
+    min-height: 1.3em;
+  }
+
+  /* ---- Cake scene ---- */
+  .cake-stage {
+    position: relative;
+    width: 260px;
+    height: 260px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    touch-action: none;
+    cursor: pointer;
+  }
+
+  .plate {
+    position: absolute;
+    bottom: 10px;
+    width: 220px;
+    height: 46px;
+    background: var(--plate-cream);
+    border: 4px solid #E8D9BE;
+    border-radius: 50%;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+  }
+
+  .cake-group {
+    position: absolute;
+    bottom: 26px;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .cake-group.eaten {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.8) translateY(10px);
+    pointer-events: none;
+  }
+
+  .tier {
+    position: relative;
+    border: 5px solid var(--stroke-cream);
+    box-shadow: 0 6px 0 rgba(0,0,0,0.15);
+    border-radius: 10px;
+  }
+  .tier-bottom {
+    width: 190px;
+    height: 78px;
+    background: #FF8FC4;
+    border-radius: 10px 10px 16px 16px;
+  }
+  .tier-top {
+    width: 130px;
+    height: 62px;
+    background: #FFB3DA;
+    margin: 0 auto;
+    margin-top: -6px;
+    border-radius: 10px 10px 14px 14px;
+  }
+  .drip-row {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: -8px;
+    display: flex;
+    justify-content: space-evenly;
+  }
+  .drip {
+    width: 14px;
+    height: 14px;
+    background: var(--stroke-cream);
+    border-radius: 0 0 8px 8px;
+    margin-top: -4px;
+  }
+  .tier-bottom .drip { background: #FFD9EC; }
+  .tier-top .drip { background: var(--stroke-cream); }
+
+  .candle-layer {
+    position: absolute;
+    top: -34px;
+    left: 8px;
+    right: 8px;
+    height: 34px;
+  }
+  .candle {
+    position: absolute;
+    bottom: 0;
+    width: 5px;
+    height: 20px;
+    margin-left: -2.5px;
+    background: repeating-linear-gradient(
+      to bottom, var(--stroke-cream) 0px, var(--stroke-cream) 4px,
+      var(--accent-hot) 4px, var(--accent-hot) 8px
+    );
+    border-radius: 2px;
+  }
+  .flame {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    width: 8px;
+    height: 12px;
+    margin-left: -4px;
+    background: radial-gradient(circle at 50% 70%, #FFE9A8 0%, #FFA83E 55%, #E2521C 100%);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    transform-origin: bottom center;
+    animation: flicker 0.4s ease-in-out infinite alternate;
+  }
+  @keyframes flicker {
+    0% { transform: scale(1) rotate(-4deg); }
+    100% { transform: scale(1.15) rotate(4deg); }
+  }
+  .candle.out .flame { display: none; }
+  .smoke {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    margin-left: -4px;
+    width: 8px;
+    height: 8px;
+    background: rgba(200,200,200,0.6);
+    border-radius: 50%;
+    opacity: 0;
+  }
+  .candle.out .smoke {
+    animation: smoke-puff 0.9s ease-out forwards;
+  }
+  @keyframes smoke-puff {
+    0% { opacity: 0.8; transform: translateY(0) scale(0.6); }
+    100% { opacity: 0; transform: translateY(-18px) scale(1.6); }
+  }
+
+  .bite {
+    position: absolute;
+    background: var(--plate-cream);
+    border-radius: 45% 55% 50% 50% / 55% 45% 55% 45%;
+    z-index: 5;
+  }
+
+  /* ---- Note ---- */
+  .note-sprite {
+    position: relative;
+    width: 90px;
+    height: 66px;
+    background: var(--stroke-cream);
+    border: 4px solid var(--shadow-deep);
+    border-radius: 6px;
+    cursor: pointer;
+    opacity: 0;
+    transform: scale(0.4);
+    display: none;
+  }
+  .note-sprite.show {
+    display: block;
+    animation: note-pop 0.5s cubic-bezier(.34,1.56,.64,1) forwards;
+  }
+  @keyframes note-pop {
+    0% { opacity: 0; transform: scale(0.3) rotate(-8deg); }
+    100% { opacity: 1; transform: scale(1) rotate(-4deg); }
+  }
+  .note-sprite::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 0; height: 0;
+    border-left: 45px solid transparent;
+    border-right: 45px solid transparent;
+    border-top: 30px solid var(--accent-hot);
+  }
+  .note-sprite .tap-hint {
+    position: absolute;
+    bottom: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: var(--shadow-deep);
+    white-space: nowrap;
+    animation: blink-hint 1.2s steps(1) infinite;
+  }
+  @keyframes blink-hint {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0.3; }
+  }
+
+  /* ---- Modal ---- */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(217,68,143,0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    padding: 24px;
+  }
+  .modal-overlay.show { display: flex; }
+  .note-card {
+    background: var(--stroke-cream);
+    border: 5px solid var(--shadow-deep);
+    border-radius: 12px;
+    padding: 24px 22px;
+    max-width: 340px;
+    text-align: center;
+    box-shadow: 0 10px 0 rgba(0,0,0,0.15);
+    animation: card-open 0.4s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes card-open {
+    0% { opacity: 0; transform: scale(0.7); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  .note-card h2 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 15px;
+    color: var(--accent-hot);
+    -webkit-text-stroke: 1px var(--shadow-deep);
+    margin: 0 0 14px;
+  }
+  .note-message {
+    font-family: 'VT323', monospace;
+    font-size: 22px;
+    color: var(--shadow-deep);
+    line-height: 1.4;
+    white-space: pre-line;
+  }
+  .close-btn {
+    margin-top: 18px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    color: var(--stroke-cream);
+    -webkit-text-stroke: 1px var(--shadow-deep);
+    background: var(--accent-hot);
+    border: 3px solid var(--shadow-deep);
+    border-radius: 8px;
+    padding: 10px 18px;
+    cursor: pointer;
+  }
+
+  .replay-link {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    color: var(--stroke-cream);
+    -webkit-text-stroke: 1.5px var(--shadow-deep);
+    background: var(--accent-hot);
+    border: 4px solid var(--stroke-cream);
+    border-radius: 10px;
+    box-shadow: 0 5px 0 var(--shadow-deep);
+    padding: 10px 20px;
+    text-decoration: none;
+    display: none;
+  }
+  .replay-link.show { display: inline-block; }
+</style>
+</head>
+<body>
+
+  <div class="wrap">
+    <h1 class="arcade-text">VERNICE'S CAKE!</h1>
+    <div class="hint" id="hint">Tap the candles to blow them out!</div>
+
+    <div class="cake-stage" id="cakeStage">
+      <div class="plate"></div>
+      <div class="cake-group" id="cakeGroup">
+        <div class="tier tier-top">
+          <div class="drip-row" id="topDrips"></div>
+          <div class="candle-layer" id="candleLayer"></div>
+        </div>
+        <div class="tier tier-bottom">
+          <div class="drip-row" id="bottomDrips"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-sprite" id="noteSprite">
+      <div class="tap-hint">TAP ME!</div>
+    </div>
+
+    <a class="replay-link" id="replayLink" href="index.html">PLAY AGAIN ▶</a>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="note-card">
+      <h2>HAPPY BIRTHDAY!</h2>
+      <div class="note-message" id="noteMessage">Happy Birthday, Vernice!
+
+Hope you had fun gathering ingredients,
+mixing, pouring, baking, frosting and
+sprinkling your way through this whole
+silly little game.
+
+Wishing you a year as sweet as the
+cake you just "baked" (and ate).
+
+Love you lots!</div>
+      <button class="close-btn" id="closeBtn">CLOSE</button>
+    </div>
+  </div>
+
+<script>
+  const TOTAL_CANDLES = 16;
+  const BITES_NEEDED = 8;
+
+  const candleLayer = document.getElementById("candleLayer");
+  const cakeStage = document.getElementById("cakeStage");
+  const cakeGroup = document.getElementById("cakeGroup");
+  const hintEl = document.getElementById("hint");
+  const noteSprite = document.getElementById("noteSprite");
+  const modalOverlay = document.getElementById("modalOverlay");
+  const replayLink = document.getElementById("replayLink");
+
+  let candlesLit = true;
+  let bitesTaken = 0;
+
+  // decorative drip dots along tier edges
+  function makeDrips(container, count) {
+    for (let i = 0; i < count; i++) {
+      const d = document.createElement("div");
+      d.className = "drip";
+      container.appendChild(d);
+    }
+  }
+  makeDrips(document.getElementById("topDrips"), 6);
+  makeDrips(document.getElementById("bottomDrips"), 8);
+
+  // lay out 16 candles in two rows across the top tier
+  const candles = [];
+  const perRow = 8;
+  const layerWidth = 114; // matches candle-layer effective width
+  for (let i = 0; i < TOTAL_CANDLES; i++) {
+    const row = Math.floor(i / perRow);
+    const col = i % perRow;
+    const x = (col + 0.5) * (layerWidth / perRow);
+    const y = row === 0 ? 18 : 4;
+    const candle = document.createElement("div");
+    candle.className = "candle";
+    candle.style.left = x + "px";
+    candle.style.bottom = y + "px";
+    const flame = document.createElement("div");
+    flame.className = "flame";
+    flame.style.animationDelay = (Math.random() * 0.4) + "s";
+    const smoke = document.createElement("div");
+    smoke.className = "smoke";
+    candle.appendChild(flame);
+    candle.appendChild(smoke);
+    candleLayer.appendChild(candle);
+    candles.push(candle);
+  }
+
+  function blowOutCandles() {
+    candlesLit = false;
+    candles.forEach((c, i) => {
+      setTimeout(() => c.classList.add("out"), i * 40);
+    });
+    hintEl.textContent = "Now take a bite!";
+  }
+
+  function addBite(x, y) {
+    const bite = document.createElement("div");
+    bite.className = "bite";
+    const size = 34 + Math.random() * 14;
+    bite.style.width = size + "px";
+    bite.style.height = size + "px";
+    bite.style.left = (x - size / 2) + "px";
+    bite.style.top = (y - size / 2) + "px";
+    cakeGroup.appendChild(bite);
+    bitesTaken++;
+    const remaining = BITES_NEEDED - bitesTaken;
+    hintEl.textContent = remaining > 0
+      ? "Yum! " + remaining + " more bite" + (remaining === 1 ? "" : "s") + " to go!"
+      : "All gone!";
+
+    if (bitesTaken >= BITES_NEEDED) {
+      setTimeout(() => {
+        cakeGroup.classList.add("eaten");
+        setTimeout(showNote, 500);
+      }, 250);
+    }
+  }
+
+  function showNote() {
+    hintEl.textContent = "";
+    noteSprite.classList.add("show");
+  }
+
+  cakeStage.addEventListener("pointerdown", (e) => {
+    if (candlesLit) {
+      blowOutCandles();
+      return;
+    }
+    if (cakeGroup.classList.contains("eaten")) return;
+    const r = cakeGroup.getBoundingClientRect();
+    const x = e.clientX - r.left;
+    const y = e.clientY - r.top;
+    addBite(x, y);
+  });
+
+  noteSprite.addEventListener("pointerdown", () => {
+    modalOverlay.classList.add("show");
+  });
+
+  document.getElementById("closeBtn").addEventListener("pointerdown", () => {
+    modalOverlay.classList.remove("show");
+    replayLink.classList.add("show");
+  });
+</script>
+
+</body>
+</html>
